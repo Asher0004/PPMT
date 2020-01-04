@@ -1,7 +1,7 @@
 ![badge](https://github.com/Asher0004/PPMT/workflows/C++%20CI/badge.svg)
 
-# PPMT
-Personal Password Management tool
+# Personal Password Management tool
+
              
 ```bash
              
