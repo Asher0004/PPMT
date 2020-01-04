@@ -1,0 +1,17 @@
+name: C++ CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: install required
+      run: sudo apt-get install libcrypto++-dev libcrypto++-doc libcrypto++-utils --fix-missing
+    - name: install required
+      run: sudo apt-get install libjsoncpp-dev --fix-missing
+    - uses: actions/checkout@v1
+    - name: build
+      run: g++ -std=c++17 authentificate.cpp -o authentificate -lcryptopp -ljsoncpp
