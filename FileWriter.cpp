@@ -75,6 +75,19 @@ std::string FileWriter::addEntryToJsonString(std::string JsonString, DataInfosJs
     return root.toStyledString();
 }
 
+std::string FileWriter::deletedRowToJsonString(std::string JsonString, int lineToSupress){
+    Json::Value root;
+    std::stringstream stream(JsonString);
+    stream >> root;
+    Json::Value infoArray = root["accounts"];
+    Json::Value got;
+    Json::ArrayIndex arrayIndex;
+    arrayIndex = lineToSupress-1;
+    infoArray.removeIndex(arrayIndex, &got);
+    root["accounts"] = infoArray;
+    return root.toStyledString();
+}
+
 SHA512keysWriter FileWriter::generateKeyIv(std::string pwdContent)
 {
     unsigned char iv[CryptoPP::AES::BLOCKSIZE];
@@ -133,7 +146,8 @@ bool FileWriter::validatepwdFile(std::string pwdFile)
     {
         return true;
     }
-
+    
+    std::cout << "Invalid password for decrypt file" << std::endl;
     return false;
 }
 
@@ -166,6 +180,7 @@ bool FileWriter::validatepwdContent(std::string pwdFile, std::string pwdContent)
     }
     catch (const std::exception &e)
     {
+        std::cout << "Invalid password for data entries" << std::endl;
         return false;
     }
 }
@@ -225,4 +240,16 @@ void FileWriter::saveEncryptedData(std::string EncryptedData)
     }
 
     file.close();
+}
+
+void FileWriter::saveDeletedRowEntryInfos(int lineToSupress, std::string pwdFile)
+{
+    SHA512keysWriter sha512keysFile = FileWriter::generateKeyFromPwdAndIv(pwdFile, FileWriter::ivFile);
+    std::string decryptedJson = FileWriter::DecryptJsonFile(sha512keysFile);
+
+    std::string jsonStringUpdated =  FileWriter::deletedRowToJsonString(decryptedJson, lineToSupress);
+
+    std::string JsonEncrypted = FileWriter::aesCTREncrypt(sha512keysFile.key, sha512keysFile.iv, jsonStringUpdated);
+
+    FileWriter::saveEncryptedData(JsonEncrypted);
 }

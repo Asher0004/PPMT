@@ -17,7 +17,6 @@ void addEntry()
 
     if (!fileWriter.validatepwdFile(pwdFile))
     {
-        std::cout << "Invalid password for decrypt file" << std::endl;
         return;
     }
 
@@ -26,7 +25,6 @@ void addEntry()
 
     if (!fileWriter.validatepwdContent(pwdFile, pwdContent))
     {
-        std::cout << "Invalid password for data entries" << std::endl;
         return;
     }
 
@@ -50,7 +48,29 @@ void addEntry()
 
 void RemoveAnEntry()
 {
-    // TODO
+    FileReader fileReader;
+    std::cout << "Password for decrypt file : ";
+    std::string pwdFile = GetTextCinMax50char();
+
+    if (!fileReader.validatepwdFile(pwdFile))
+    {
+        return;
+    }
+
+    int numberData = fileReader.printListEntriesInfosCensored(pwdFile);
+
+    int lineToSupress = GetLineToSupress(numberData);
+
+    if (lineToSupress == 0)
+    {
+        return;
+    }
+
+    FileWriter fileWriter;
+
+    fileWriter.saveDeletedRowEntryInfos(lineToSupress, pwdFile);
+
+    std::cout << "Deleted row succesfully." << std::endl;
 }
 
 void ListEntries()
@@ -61,7 +81,6 @@ void ListEntries()
 
     if (!fileReader.validatepwdFile(pwdFile))
     {
-        std::cout << "Invalid password for decrypt file" << std::endl;
         return;
     }
 
@@ -69,6 +88,7 @@ void ListEntries()
 
     int trial = 0;
     std::string pwdContent;
+    bool success = false;
     do
     {
         std::cout << "Password for data entries : ";
@@ -76,10 +96,10 @@ void ListEntries()
 
         if (!fileReader.validatepwdContent(pwdFile, pwdContent))
         {
-            std::cout << "Invalid password for data entries" << std::endl;
         }
         else
         {
+            success = true;
             break;
         }
         trial++;

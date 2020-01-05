@@ -85,6 +85,22 @@ SHA512keysReader FileReader::generateKeyFromPwdAndIv(std::string pwdContent, std
     return sha512keys;
 }
 
+bool FileReader::validateJsonContentData(std::string decryptedJson)
+{
+    std::stringstream stream(decryptedJson);
+    Json::Value root;
+    stream >> root;
+    Json::Value infoArray = root["accounts"];
+
+    if (infoArray.size() == 0)
+    {
+        std::cout << "Need to have data. Use option 1." << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
 bool FileReader::validatepwdFile(std::string pwdFile)
 {
     if (!isFileExistReader(FileReader::pathFile))
@@ -96,12 +112,13 @@ bool FileReader::validatepwdFile(std::string pwdFile)
     SHA512keysReader sha512keysFile = FileReader::generateKeyFromPwdAndIv(pwdFile, FileReader::ivFile);
     std::string decryptedJson = FileReader::DecryptJsonFile(sha512keysFile);
 
-    if (decryptedJson[0] == '{')
+    if (decryptedJson[0] != '{')
     {
-        return true;
+        std::cout << "Invalid password for decrypt file" << std::endl;
+        return false;
     }
 
-    return false;
+    return FileReader::validateJsonContentData(decryptedJson);
 }
 
 bool FileReader::validatepwdContent(std::string pwdFile, std::string pwdContent)
@@ -133,12 +150,13 @@ bool FileReader::validatepwdContent(std::string pwdFile, std::string pwdContent)
         return true;
     }
     catch (const std::exception &e)
-    {
+    {   
+        std::cout << "Invalid password for data entries" << std::endl;
         return false;
     }
 }
 
-void FileReader::printListEntriesInfosCensored(std::string pwdFile)
+int FileReader::printListEntriesInfosCensored(std::string pwdFile)
 {
 
     SHA512keysReader sha512keysFile = FileReader::generateKeyFromPwdAndIv(pwdFile, FileReader::ivFile);
@@ -151,6 +169,7 @@ void FileReader::printListEntriesInfosCensored(std::string pwdFile)
 
     VariadicTable<int, std::string, std::string, std::string> table({"line", "url", "user", "pwd"});
 
+    int numberData = 0;
     int numberLine = 1;
     std::string url;
     for (int i = 0; i < infoArray.size(); i++)
@@ -158,9 +177,12 @@ void FileReader::printListEntriesInfosCensored(std::string pwdFile)
         url = infoArray[i]["url"].toStyledString().substr(1, infoArray[i]["url"].toStyledString().length() - 3);
         table.addRow({numberLine, url, "*****", "*****"});
         numberLine++;
+        numberData++;
     }
 
     table.print(std::cout);
+
+    return numberData;
 }
 
 void FileReader::printListEntriesInfosDecrypted(std::string pwdFile, std::string pwdContent)

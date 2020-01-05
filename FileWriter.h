@@ -61,6 +61,7 @@ private:
     std::string aesCBCDecrypt(std::string KEY, std::string IV, std::string infoToDecrypt);
 
     std::string addEntryToJsonString(std::string JsonString, DataInfosJsonRowWriter dataInfosJsonRow, SHA512keysWriter keys);
+    std::string deletedRowToJsonString(std::string JsonString, int lineToSupress);
     std::string DecryptJsonFile(SHA512keysWriter sha512keys);
 
     SHA512keysWriter generateKeyIv(std::string pwdContent);
@@ -77,4 +78,5 @@ public:
     bool validatepwdContent(std::string pwdFile, std::string pwdContent);
 
     void saveEntryInfos(DataInfosJsonRowWriter entryInfos, std::string pwdFile, std::string pwdContent);
+    void saveDeletedRowEntryInfos(int lineToSupress, std::string pwdFile);
 };
