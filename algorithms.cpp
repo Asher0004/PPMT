@@ -66,8 +66,6 @@ void RemoveAnEntry()
         return;
     }
 
-    //are you sure ?
-
     FileWriter fileWriter;
 
     fileWriter.saveDeletedRowEntryInfos(lineToSupress, pwdFile);
