@@ -96,7 +96,8 @@ int GetInputSubMEnu()
     return choice;
 }
 
-int GetLineToSupress(int numberData){
+int GetLineToSupress(int numberData)
+{
     int lineToSupress = 0;
     std::string text;
     bool loop = true;
