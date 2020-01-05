@@ -44,6 +44,8 @@ void addEntry()
     } while (validateData());
 
     fileWriter.saveEntryInfos(entryInfos, pwdFile, pwdContent);
+
+    std::cout << "Saved entry infos succesfully." << std::endl;
 }
 
 void RemoveAnEntry()
@@ -138,5 +140,29 @@ void ModifyPasswordFile()
 
 void ModifyPasswordAccessEntries()
 {
-    // TODO
+    FileReader fileReader;
+    std::cout << "Password for decrypt file : ";
+    std::string pwdFile = GetTextCinMax50char();
+
+    if (!fileReader.validatepwdFile(pwdFile))
+    {
+        return;
+    }
+
+    std::cout << "Old password for data entries : ";
+    std::string oldPwdContent = GetTextCinMax50char();
+
+    if (!fileReader.validatepwdContent(pwdFile, oldPwdContent))
+    {
+        return;
+    }
+
+    std::cout << "New password for data entries : ";
+    std::string newPwdContent = GetTextCinMax50char();
+
+    FileWriter fileWriter;
+
+    fileWriter.changepwdContent(pwdFile, oldPwdContent, newPwdContent);
+
+    std::cout << "Changed password content succesfully." << std::endl;
 }

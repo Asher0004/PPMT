@@ -266,3 +266,63 @@ void FileWriter::changepwdFile(std::string oldPwdFile, std::string newPwdFile)
 
     FileWriter::saveEncryptedData(JsonEncrypted);
 }
+
+void FileWriter::changepwdContent(std::string pwdFile, std::string oldPwdContent, std::string newPwdContent)
+{
+    SHA512keysWriter sha512keysFile = FileWriter::generateKeyFromPwdAndIv(pwdFile, FileWriter::ivFile);
+    std::string decryptedJson = FileWriter::DecryptJsonFile(sha512keysFile);
+
+    std::stringstream stream(decryptedJson);
+    Json::Value root;
+    stream >> root;
+    Json::Value infoArray = root["accounts"];
+
+    Json::Value rootCopyEmpty;
+    rootCopyEmpty["accounts"] = Json::arrayValue;
+    Json::Value infoArrayCopy = rootCopyEmpty["accounts"];
+
+    std::string url;
+
+    std::string encodedIv;
+    SHA512keysWriter oldSha512KeysWriter;
+    SHA512keysWriter newSha512KeysWriter;
+
+    std::string encodedUser;
+    std::string encodedPwd;
+    Json::Value infosRow;
+    std::string user;
+    std::string pwd;
+    DataInfosJsonRowWriter entryInfos;
+
+    for (int i = 0; i < infoArray.size(); i++)
+    {
+        url = infoArray[i]["url"].toStyledString().substr(1, infoArray[i]["url"].toStyledString().length() - 3);
+
+        encodedIv = infoArray[i]["iv"].toStyledString().substr(1, infoArray[i]["iv"].toStyledString().length() - 3);
+        oldSha512KeysWriter = FileWriter::generateKeyFromPwdAndIv(oldPwdContent, encodedIv);
+
+        encodedUser = infoArray[i]["user"].toStyledString().substr(1, infoArray[i]["user"].toStyledString().length() - 3);
+        encodedPwd = infoArray[i]["pwd"].toStyledString().substr(1, infoArray[i]["pwd"].toStyledString().length() - 3);
+
+        user = FileWriter::aesCBCDecrypt(oldSha512KeysWriter.key, oldSha512KeysWriter.iv, encodedUser);
+        pwd = FileWriter::aesCBCDecrypt(oldSha512KeysWriter.key, oldSha512KeysWriter.iv, encodedPwd);
+
+        newSha512KeysWriter = FileWriter::generateKeyFromPwdAndIv(newPwdContent, encodedIv);
+        entryInfos.url = url;
+        entryInfos.user = user;
+        entryInfos.pwd = pwd;
+
+        infosRow["iv"] = newSha512KeysWriter.iv;
+        infosRow["url"] = url;
+        infosRow["user"] = FileWriter::aesCBCEncrypt(newSha512KeysWriter.key, newSha512KeysWriter.iv, user);
+        infosRow["pwd"] = FileWriter::aesCBCEncrypt(newSha512KeysWriter.key, newSha512KeysWriter.iv, pwd);
+
+        infoArrayCopy.append(infosRow);
+    }
+
+    rootCopyEmpty["accounts"] = infoArrayCopy;
+    
+    std::string JsonEncrypted = FileWriter::aesCTREncrypt(sha512keysFile.key, sha512keysFile.iv, rootCopyEmpty.toStyledString());
+    JsonEncrypted.erase(std::remove_if(JsonEncrypted.begin(), JsonEncrypted.end(), [](unsigned char x) { return std::isspace(x); }), JsonEncrypted.end());
+    FileWriter::saveEncryptedData(JsonEncrypted);
+}

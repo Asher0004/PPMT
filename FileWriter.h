@@ -20,7 +20,6 @@
 #include "cryptopp/pssr.h"
 #include <jsoncpp/json/json.h>
 
-
 inline bool isFileExistWriter(const std::string &name)
 {
     struct stat buffer;
@@ -78,6 +77,7 @@ public:
     bool validatepwdContent(std::string pwdFile, std::string pwdContent);
 
     void changepwdFile(std::string oldPwdFile, std::string newPwdFile);
+    void changepwdContent(std::string pwdFile, std::string oldPwdContent, std::string newPwdContent);
     void saveEntryInfos(DataInfosJsonRowWriter entryInfos, std::string pwdFile, std::string pwdContent);
     void saveDeletedRowEntryInfos(int lineToSupress, std::string pwdFile);
 };
