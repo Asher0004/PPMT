@@ -75,14 +75,15 @@ std::string FileWriter::addEntryToJsonString(std::string JsonString, DataInfosJs
     return root.toStyledString();
 }
 
-std::string FileWriter::deletedRowToJsonString(std::string JsonString, int lineToSupress){
+std::string FileWriter::deletedRowToJsonString(std::string JsonString, int lineToSupress)
+{
     Json::Value root;
     std::stringstream stream(JsonString);
     stream >> root;
     Json::Value infoArray = root["accounts"];
     Json::Value got;
     Json::ArrayIndex arrayIndex;
-    arrayIndex = lineToSupress-1;
+    arrayIndex = lineToSupress - 1;
     infoArray.removeIndex(arrayIndex, &got);
     root["accounts"] = infoArray;
     return root.toStyledString();
@@ -146,7 +147,7 @@ bool FileWriter::validatepwdFile(std::string pwdFile)
     {
         return true;
     }
-    
+
     std::cout << "Invalid password for decrypt file" << std::endl;
     return false;
 }
@@ -247,9 +248,21 @@ void FileWriter::saveDeletedRowEntryInfos(int lineToSupress, std::string pwdFile
     SHA512keysWriter sha512keysFile = FileWriter::generateKeyFromPwdAndIv(pwdFile, FileWriter::ivFile);
     std::string decryptedJson = FileWriter::DecryptJsonFile(sha512keysFile);
 
-    std::string jsonStringUpdated =  FileWriter::deletedRowToJsonString(decryptedJson, lineToSupress);
+    std::string jsonStringUpdated = FileWriter::deletedRowToJsonString(decryptedJson, lineToSupress);
 
     std::string JsonEncrypted = FileWriter::aesCTREncrypt(sha512keysFile.key, sha512keysFile.iv, jsonStringUpdated);
+
+    FileWriter::saveEncryptedData(JsonEncrypted);
+}
+
+void FileWriter::changepwdFile(std::string oldPwdFile, std::string newPwdFile)
+{
+    SHA512keysWriter oldSha512keysFile = FileWriter::generateKeyFromPwdAndIv(oldPwdFile, FileWriter::ivFile);
+    std::string decryptedJson = FileWriter::DecryptJsonFile(oldSha512keysFile);
+
+    SHA512keysWriter newSha512keysFile = FileWriter::generateKeyFromPwdAndIv(newPwdFile, FileWriter::ivFile);
+
+    std::string JsonEncrypted = FileWriter::aesCTREncrypt(newSha512keysFile.key, newSha512keysFile.iv, decryptedJson);
 
     FileWriter::saveEncryptedData(JsonEncrypted);
 }

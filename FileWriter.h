@@ -77,6 +77,7 @@ public:
     bool validatepwdFile(std::string pwdFile);
     bool validatepwdContent(std::string pwdFile, std::string pwdContent);
 
+    void changepwdFile(std::string oldPwdFile, std::string newPwdFile);
     void saveEntryInfos(DataInfosJsonRowWriter entryInfos, std::string pwdFile, std::string pwdContent);
     void saveDeletedRowEntryInfos(int lineToSupress, std::string pwdFile);
 };

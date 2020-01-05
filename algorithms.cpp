@@ -116,7 +116,24 @@ void ListEntries()
 
 void ModifyPasswordFile()
 {
-    // TODO
+    FileReader fileReader;
+
+    std::cout << "Old password for decrypt/encrypt file : ";
+    std::string oldPwdFile = GetTextCinMax50char();
+
+    if (!fileReader.validatepwdFile(oldPwdFile))
+    {
+        return;
+    }
+
+    std::cout << "New password for decrypt/encrypt file : ";
+    std::string newPwdFile = GetTextCinMax50char();
+
+    FileWriter fileWriter;
+
+    fileWriter.changepwdFile(oldPwdFile, newPwdFile);
+
+    std::cout << "Changed password file succesfully." << std::endl;
 }
 
 void ModifyPasswordAccessEntries()
