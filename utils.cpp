@@ -96,6 +96,41 @@ int GetInputSubMEnu()
     return choice;
 }
 
+int GetLineToSupress(int numberData){
+    int lineToSupress = 0;
+    std::string text;
+    bool loop = true;
+    do
+    {
+        try
+        {
+            std::cout << "line to supress [q:cancel]: ";
+            std::cin >> text;
+            if (text == "q")
+            {
+                break;
+            }
+
+            lineToSupress = std::stoi(text);
+            if ((0 < lineToSupress) && (lineToSupress <= numberData))
+            {
+                loop = false;
+            }
+            else
+            {
+                throw std::invalid_argument("invalid argument");
+            }
+        }
+        catch (const std::exception &e)
+        {
+            std::cout << "invalid argument" << std::endl;
+        }
+
+    } while (loop);
+    std::cin.ignore();
+    return lineToSupress;
+}
+
 std::string GetTextCinMax50char()
 {
     bool loop = true;

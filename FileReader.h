@@ -53,6 +53,8 @@ class FileReader
 private:
     inline static const std::string ivFile = "D04BF8250278335D017A5FE311151DE2";
     inline static const std::string pathFile = getCurrentDirReader() + "/accounts.encrypted";
+    
+    bool validateJsonContentData(std::string pwdFile);
 
     std::string aesCTRDecrypt(std::string KEY, std::string IV, std::string infoToDecrypt);
     std::string aesCBCDecrypt(std::string KEY, std::string IV, std::string infoToDecrypt);
@@ -69,6 +71,6 @@ public:
     bool validatepwdFile(std::string pwdFile);
     bool validatepwdContent(std::string pwdFile, std::string pwdContent);
 
-    void printListEntriesInfosCensored(std::string pwdFile);
+    int printListEntriesInfosCensored(std::string pwdFile);
     void printListEntriesInfosDecrypted(std::string pwdFile, std::string pwdContent);
 };
