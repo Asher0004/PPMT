@@ -1,7 +1,7 @@
 ![badge](https://github.com/Asher0004/PPMT/workflows/C++%20CI/badge.svg)
 
 # Personal Password Management tool
-
+Encrypt all your data in one little file accounts.encrypted and in a very safe way using advanced cryptography.
              
 ```bash
              
@@ -29,7 +29,7 @@ sudo apt-get install libjsoncpp-dev --fix-missing
 g++ -std=c++17 authentificate.cpp -o authentificate -lcryptopp -ljsoncpp
 
 # Usage:
-```bash
+```
 root@root:~/Desktop/PPMT# ./authentificate
 -------------------Menu---------------------
 1 : Add an entry
