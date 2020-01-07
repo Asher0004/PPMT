@@ -2,6 +2,8 @@
 
 # Personal Password Management tool
 Encrypt all your data in one little file accounts.encrypted and in a very safe way using advanced cryptography.
+
+A classic Windows installer [here](https://github.com/Asher0004/PPMT/releases).
              
 ```bash
              
